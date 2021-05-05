@@ -13,7 +13,7 @@ missing() {
 }
 
 if [ -z "$1" ]; then
-  missing "[BINARY] (gaiad|akash)"
+  missing "[BINARY] (gaiad|akash|provenanced)"
 fi
 
 if [ -z "$2" ]; then
@@ -43,8 +43,10 @@ fi
 if [ -z "$8" ]; then
   missing "[SAMOLEANS]"
 fi
-
-if [ "$#" -gt 8 ]; then
+if [ -z "$9" ]; then
+  missing "[BONDING_TOKENS]"
+fi
+if [ "$#" -gt 9 ]; then
   echo "Incorrect number of parameters."
   usage
 fi
@@ -57,6 +59,7 @@ P2P_PORT=$5
 PROF_PORT=$6
 GRPC_PORT=$7
 SAMOLEANS=$8
+BONDING_TOKENS=$9
 
 echo "Creating $BINARY instance: home=$CHAIN_DIR | chain-id=$CHAIN_ID | p2p=:$P2P_PORT | rpc=:$RPC_PORT | profiling=:$PROF_PORT | grpc=:$GRPC_PORT | samoleans=:$SAMOLEANS"
 
@@ -67,7 +70,7 @@ if ! mkdir -p $CHAIN_DIR/$CHAIN_ID 2>/dev/null; then
 fi
 
 # Build genesis file incl account for passed address
-STAKE="100000000000stake"
+STAKE="100000000000$BONDING_TOKENS"
 # - the user also needs stake to perform actions
 USER_COINS="${STAKE},${SAMOLEANS}samoleans"
 
@@ -127,8 +130,8 @@ else
 fi
 
 # Start gaia
-echo "Start gaia on grpc port: $GRPC_PORT..."
-$BINARY --home $CHAIN_DIR/$CHAIN_ID start --pruning=nothing --grpc.address="0.0.0.0:$GRPC_PORT" --log_level error > $CHAIN_DIR/$CHAIN_ID.log 2>&1 &
+echo "Start $BINARY on grpc port: $GRPC_PORT..."
+$BINARY --home $CHAIN_DIR/$CHAIN_ID start --pruning=nothing --grpc.address="0.0.0.0:$GRPC_PORT" --log_level info > $CHAIN_DIR/$CHAIN_ID.log 2>&1 &
 
 # Show validator's and user's balance
 sleep 3
