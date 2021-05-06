@@ -12,7 +12,6 @@ RUN cd ibc-rs && git checkout $TAG && cargo build --release
 
 
 FROM debian:buster-slim
-LABEL maintainer="hello@informal.systems"
 
 RUN apt update && apt install -y vim jq && useradd -m hermes -s /bin/bash
 WORKDIR /home/hermes
